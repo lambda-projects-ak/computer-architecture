@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "cpu.h"
 
 #define DATA_LEN 6
@@ -21,10 +22,10 @@ void cpu_load(struct cpu *cpu)
 
   int address = 0;
 
-  for (int i = 0; i < DATA_LEN; i++)
-  {
-    cpu->ram[address++] = data[i];
-  }
+  // for (int i = 0; i < DATA_LEN; i++)
+  // {
+  //   cpu->ram[address++] = data[i];
+  // }
 
   // TODO: Replace this with something less hard-coded
 }
@@ -49,12 +50,20 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
  */
 void cpu_run(struct cpu *cpu)
 {
-  int running = 1; // True until we get a HLT instruction
+  int running = 0; // True until we get a HLT instruction
+  // int value, reg_location;
+
+  for (int i = 0; i < 50; i++)
+  {
+    cpu_ram_read(cpu, i);
+  }
 
   while (running)
   {
     // TODO
     // 1. Get the value of the current instruction (in address PC).
+    // unsigned char value = cpu->ram[cpu->pc]; // maybe?
+
     // 2. Figure out how many operands this next instruction requires
     // 3. Get the appropriate value(s) of the operands following this instruction
     // 4. switch() over it to decide on a course of action.
@@ -70,26 +79,30 @@ void cpu_init(struct cpu *cpu)
 {
   // TODO: Initialize the PC and other special registers
   cpu->pc = 0;
+  // 8 general-purpose 8-bit numeric registers R0-R7.
+  memset(cpu->registers, 0, sizeof(unsigned char) * 8);
+  // 8-bit addressing, so can address 256 bytes of RAM total
+  memset(cpu->ram, 0, sizeof(unsigned char) * 256);
 }
 
 // RAM Methods
-void cpu_ram_read(struct cpu *cpu, int index)
+int cpu_ram_read(struct cpu *cpu, int index)
 {
-  if (0 > index > 256)
+  if (index > 256 || index < 0)
   {
     printf("%s\n", "Index out of range.");
     return NULL;
   }
 
+  printf("%d\n", cpu->ram[index]);
   return cpu->ram[index];
 };
 
-void cpu_ram_write(struct cpu *cpu, int element, int index)
+void cpu_ram_write(struct cpu *cpu, unsigned char element, int index)
 {
-  if (0 > index > 256)
+  if (index > 256 || index < 0)
   {
     printf("%s\n", "Index out of range.");
-    return NULL;
   }
 
   cpu->ram[index] = element;

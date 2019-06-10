@@ -5,8 +5,8 @@
 struct cpu
 {
   int pc;
-  unsigned char registers[8]; // 8 general-purpose 8-bit numeric registers R0-R7.
-  unsigned char ram[256];     // 8-bit addressing, so can address 256 bytes of RAM total
+  unsigned char registers[8];
+  unsigned char ram[256];
 };
 
 // ALU operations
