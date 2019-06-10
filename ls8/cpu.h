@@ -2,7 +2,6 @@
 #define _CPU_H_
 
 // Holds all information about the CPU
-// [ ] Implement `struct cpu` in `cpu.h`
 struct cpu
 {
   int pc;

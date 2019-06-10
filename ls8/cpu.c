@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "cpu.h"
 
 #define DATA_LEN 6
@@ -67,4 +69,28 @@ void cpu_run(struct cpu *cpu)
 void cpu_init(struct cpu *cpu)
 {
   // TODO: Initialize the PC and other special registers
+  cpu->pc = 0;
 }
+
+// RAM Methods
+void cpu_ram_read(struct cpu *cpu, int index)
+{
+  if (0 > index > 256)
+  {
+    printf("%s\n", "Index out of range.");
+    return NULL;
+  }
+
+  return cpu->ram[index];
+};
+
+void cpu_ram_write(struct cpu *cpu, int element, int index)
+{
+  if (0 > index > 256)
+  {
+    printf("%s\n", "Index out of range.");
+    return NULL;
+  }
+
+  cpu->ram[index] = element;
+};
