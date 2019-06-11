@@ -5,6 +5,16 @@
 
 #define DATA_LEN 6
 
+void cpu_ram_write(struct cpu *cpu, unsigned char element, int index)
+{
+  if (index > 0 || index < 256)
+  {
+    printf("%s\n", "Index out of range.");
+  }
+
+  cpu->ram[index] = element;
+};
+
 /**
  * Load the binary bytes from a .ls8 source file into a RAM array
  */
@@ -40,11 +50,13 @@ void cpu_load(struct cpu *cpu, char *argv)
  */
 void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB)
 {
+  int result;
+
   switch (op)
   {
   case ALU_MUL:
     // TODO
-    int result = cpu->registers[regA] * cpu->registers[regB];
+    result = cpu->registers[regA] * cpu->registers[regB];
     printf("%d\n", result);
     break;
 
@@ -93,7 +105,7 @@ void cpu_run(struct cpu *cpu)
       break;
 
     case MUL:
-      alu_op(cpu, instruction, operandA, operandB);
+      alu(cpu, instruction, operandA, operandB);
       // printf("%d\n", cpu->registers[operandA] * cpu->registers[operandB]);
       cpu->pc += 3;
       break;
@@ -138,14 +150,4 @@ int cpu_ram_read(struct cpu *cpu, int index)
 
   printf("%d\n", cpu->ram[index]);
   return cpu->ram[index];
-};
-
-void cpu_ram_write(struct cpu *cpu, unsigned char element, int index)
-{
-  if (index > 0 || index < 256)
-  {
-    printf("%s\n", "Index out of range.");
-  }
-
-  cpu->ram[index] = element;
 };
