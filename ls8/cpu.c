@@ -22,10 +22,10 @@ void cpu_load(struct cpu *cpu)
 
   int address = 0;
 
-  // for (int i = 0; i < DATA_LEN; i++)
-  // {
-  //   cpu->ram[address++] = data[i];
-  // }
+  for (int i = 0; i < DATA_LEN; i++)
+  {
+    cpu->ram[address++] = data[i];
+  }
 
   // TODO: Replace this with something less hard-coded
 }
@@ -50,25 +50,54 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
  */
 void cpu_run(struct cpu *cpu)
 {
-  int running = 0; // True until we get a HLT instruction
-  // int value, reg_location;
-
-  for (int i = 0; i < 50; i++)
-  {
-    cpu_ram_read(cpu, i);
-  }
+  int running = 1; // True until we get a HLT instruction
+  unsigned char instruction;
+  unsigned char operandA, operandB;
 
   while (running)
   {
     // TODO
     // 1. Get the value of the current instruction (in address PC).
-    // unsigned char value = cpu->ram[cpu->pc]; // maybe?
-
+    instruction = cpu->ram[cpu->pc];
     // 2. Figure out how many operands this next instruction requires
+    // use first two numbers in binary to determine how many operands we need
+    // 10 == 2
+    // 01 == 1
+    // 00 == 0
+
     // 3. Get the appropriate value(s) of the operands following this instruction
+    if (instruction > 0b01111111)
+    {
+      operandA = cpu->ram[cpu->pc + 1];
+      operandB = cpu->ram[cpu->pc + 2];
+    }
+    else if (instruction > 0b00111111)
+    {
+      operandA = cpu->ram[cpu->pc + 1];
+    }    
     // 4. switch() over it to decide on a course of action.
     // 5. Do whatever the instruction should do according to the spec.
     // 6. Move the PC to the next instruction.
+    switch (instruction)
+    {
+    case LDI:
+      cpu->registers[operandA] = operandB;
+      cpu->pc += 3;
+      break;
+
+    case PRN:
+      printf("%d\n", cpu->registers[operandA]);
+      cpu->pc += 2;
+      break;
+
+    case HLT:
+      running = 0;
+      break;
+
+    default:
+      printf("Unknown instruction %02x at address %02x\n", instruction, cpu->pc);
+      exit(1);
+    }
   }
 }
 
