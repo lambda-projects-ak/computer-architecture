@@ -37,7 +37,7 @@ void cpu_load(struct cpu *cpu, char *argv)
       continue;
     };
 
-    // load memory here
+    // load instructions and operands into instructions
     cpu->ram[index] = file_line;
     index++;
   };
@@ -54,10 +54,8 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
   switch (op)
   {
   case ALU_MUL:
-    // TODO
     cpu->registers[0] = cpu->registers[regA] * cpu->registers[regB];
     break;
-
     // TODO: implement more ALU ops
   }
 }
@@ -73,15 +71,9 @@ void cpu_run(struct cpu *cpu)
 
   while (running)
   {
-    // TODO
     // 1. Get the value of the current instruction (in address PC).
     instruction = cpu->ram[cpu->pc];
     // 2. Figure out how many operands this next instruction requires
-    // use first two numbers in binary to determine how many operands we need
-    // 10 == 2
-    // 01 == 1
-    // 00 == 0
-
     // 3. Get the appropriate value(s) of the operands following this instruction
     if (instruction > 0b01111111)
     {
@@ -92,9 +84,7 @@ void cpu_run(struct cpu *cpu)
     {
       operandA = cpu->ram[cpu->pc + 1];
     }
-    // 4. switch() over it to decide on a course of action.
-    // 5. Do whatever the instruction should do according to the spec.
-    // 6. Move the PC to the next instruction.
+    // 4. switch() over it to decide on a course of action, increment pc
     switch (instruction)
     {
     case LDI:
@@ -104,7 +94,6 @@ void cpu_run(struct cpu *cpu)
 
     case MUL:
       alu(cpu, instruction, operandA, operandB);
-      // printf("%d\n", cpu->registers[operandA] * cpu->registers[operandB]);
       cpu->pc += 3;
       break;
 
