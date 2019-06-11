@@ -8,7 +8,7 @@
 /**
  * Load the binary bytes from a .ls8 source file into a RAM array
  */
-void cpu_load(struct cpu *cpu)
+void cpu_load(struct cpu *cpu, char *argv)
 {
   char data[DATA_LEN] = {
       // From print8.ls8
@@ -28,6 +28,9 @@ void cpu_load(struct cpu *cpu)
   }
 
   // TODO: Replace this with something less hard-coded
+  FILE *fp;
+  printf("%s\n", argv);
+  fp = fopen(argv, "r");
 }
 
 /**
@@ -74,7 +77,7 @@ void cpu_run(struct cpu *cpu)
     else if (instruction > 0b00111111)
     {
       operandA = cpu->ram[cpu->pc + 1];
-    }    
+    }
     // 4. switch() over it to decide on a course of action.
     // 5. Do whatever the instruction should do according to the spec.
     // 6. Move the PC to the next instruction.
