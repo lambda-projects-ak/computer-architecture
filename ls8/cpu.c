@@ -14,12 +14,12 @@ void cpu_load(struct cpu *cpu, char *argv)
   FILE *fp;
   fp = fopen(argv, "r");
   char line[1024];
+  int index = 0;
 
   while (fgets(line, sizeof(line), fp) != NULL)
   {
     char *endptr;
-    int index = 0;
-    unsigned char file_output = strtoul(line, &endptr, 2);
+    unsigned char file_line = strtoul(line, &endptr, 2);
 
     if (endptr == line)
     {
@@ -28,17 +28,11 @@ void cpu_load(struct cpu *cpu, char *argv)
     };
 
     // load memory here
-    printf("%d\n", file_output);
-    cpu->ram[index] = file_output;
+    cpu->ram[index] = file_line;
     index++;
   };
 
   fclose(fp);
-
-  for (int i = 0; i < 5; i++)
-  {
-    printf("%d\n", cpu->ram[i]);
-  };
 }
 
 /**
