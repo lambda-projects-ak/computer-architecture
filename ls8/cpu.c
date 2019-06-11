@@ -50,14 +50,12 @@ void cpu_load(struct cpu *cpu, char *argv)
  */
 void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB)
 {
-  int result;
 
   switch (op)
   {
   case ALU_MUL:
     // TODO
-    result = cpu->registers[regA] * cpu->registers[regB];
-    printf("%d\n", result);
+    cpu->registers[0] = cpu->registers[regA] * cpu->registers[regB];
     break;
 
     // TODO: implement more ALU ops
