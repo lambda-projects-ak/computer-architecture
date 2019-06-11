@@ -44,6 +44,8 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
   {
   case ALU_MUL:
     // TODO
+    int result = cpu->registers[regA] * cpu->registers[regB];
+    printf("%d\n", result);
     break;
 
     // TODO: implement more ALU ops
@@ -87,6 +89,12 @@ void cpu_run(struct cpu *cpu)
     {
     case LDI:
       cpu->registers[operandA] = operandB;
+      cpu->pc += 3;
+      break;
+
+    case MUL:
+      alu_op(cpu, instruction, operandA, operandB);
+      // printf("%d\n", cpu->registers[operandA] * cpu->registers[operandB]);
       cpu->pc += 3;
       break;
 
@@ -134,7 +142,7 @@ int cpu_ram_read(struct cpu *cpu, int index)
 
 void cpu_ram_write(struct cpu *cpu, unsigned char element, int index)
 {
-  if (index > 256 || index < 0)
+  if (index > 0 || index < 256)
   {
     printf("%s\n", "Index out of range.");
   }
