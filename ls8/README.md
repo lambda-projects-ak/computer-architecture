@@ -208,18 +208,18 @@ Extend your LS8 emulator to support the following program:
 ```
 # mult.ls8: Multiply 8x9 and print 72
 
-10000010 # LDI R0,8
+10 000010 # LDI R0,8
 00000000
 00001000
-10000010 # LDI R1,9
+10 000010 # LDI R1,9
 00000001
 00001001
-10100010 # MUL R0,R1
+10 100010 # MUL R0,R1
 00000000
 00000001
-01000111 # PRN R0
+01 000111 # PRN R0
 00000000
-00000001 # HLT
+00 000001 # HLT
 ```
 
 One you run it with `./ls8 examples/mult.ls8`, you should see:

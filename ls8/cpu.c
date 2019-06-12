@@ -68,6 +68,7 @@ void cpu_run(struct cpu *cpu)
   int running = 1; // True until we get a HLT instruction
   unsigned char instruction;
   unsigned char operandA, operandB;
+  cpu->registers[SP] = 243; // start stack at 0xF3
 
   while (running)
   {
@@ -75,12 +76,13 @@ void cpu_run(struct cpu *cpu)
     instruction = cpu->ram[cpu->pc];
     // 2. Figure out how many operands this next instruction requires
     // 3. Get the appropriate value(s) of the operands following this instruction
-    if (instruction > 0b01111111)
+
+    if (instruction >> 6 == 2)
     {
       operandA = cpu->ram[cpu->pc + 1];
       operandB = cpu->ram[cpu->pc + 2];
     }
-    else if (instruction > 0b00111111)
+    else if (instruction >> 6 == 1)
     {
       operandA = cpu->ram[cpu->pc + 1];
     }
@@ -99,6 +101,20 @@ void cpu_run(struct cpu *cpu)
 
     case PRN:
       printf("%d\n", cpu->registers[operandA]);
+      cpu->pc += 2;
+      break;
+
+    case PUSH:
+      cpu->registers[SP]--;
+      // copy register value to stack
+      cpu->ram[cpu->registers[SP]] = cpu->registers[operandA];
+      cpu->pc += 2;
+      break;
+
+    case POP:
+      // copy value from stack to register
+      cpu->registers[operandA] = cpu->ram[cpu->registers[SP]];
+      cpu->registers[SP]++;
       cpu->pc += 2;
       break;
 
