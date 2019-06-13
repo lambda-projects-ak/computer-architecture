@@ -57,6 +57,10 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
     cpu->registers[0] = cpu->registers[regA] * cpu->registers[regB];
     break;
     // TODO: implement more ALU ops
+  case ADD:
+    // add the value in two registers and store the result in register A
+    cpu->registers[regA] = cpu->registers[regA] + cpu->registers[regB];
+    break;
   }
 }
 
@@ -69,6 +73,7 @@ void cpu_run(struct cpu *cpu)
   unsigned char instruction;
   unsigned char operandA, operandB;
   cpu->registers[SP] = 243; // start stack at 0xF3
+  int return_address;
 
   while (running)
   {
@@ -89,13 +94,9 @@ void cpu_run(struct cpu *cpu)
     // 4. switch() over it to decide on a course of action, increment pc
     switch (instruction)
     {
+    // general
     case LDI:
       cpu->registers[operandA] = operandB;
-      cpu->pc += 3;
-      break;
-
-    case MUL:
-      alu(cpu, instruction, operandA, operandB);
       cpu->pc += 3;
       break;
 
@@ -104,6 +105,11 @@ void cpu_run(struct cpu *cpu)
       cpu->pc += 2;
       break;
 
+    case HLT:
+      running = 0;
+      break;
+
+    // stack
     case PUSH:
       cpu->registers[SP]--;
       // copy register value to stack
@@ -118,8 +124,34 @@ void cpu_run(struct cpu *cpu)
       cpu->pc += 2;
       break;
 
-    case HLT:
-      running = 0;
+    // subroutine
+    case CALL:
+      return_address = cpu->pc + 2;
+      // push return address to stack
+      cpu->registers[SP]--;
+      cpu->ram[cpu->registers[SP]] = return_address;
+      // move pc to subroutine from R0
+      cpu->pc = cpu->registers[operandA];
+      break;
+
+    case RET:
+      // get return address from stack
+      return_address = cpu->ram[cpu->registers[SP]];
+      // increment SP
+      cpu->registers[SP]++;
+      // set pc to return address
+      cpu->pc = return_address;
+      break;
+
+    // mathematics
+    case ADD:
+      alu(cpu, instruction, operandA, operandB);
+      cpu->pc += 3;
+      break;
+
+    case MUL:
+      alu(cpu, instruction, operandA, operandB);
+      cpu->pc += 3;
       break;
 
     default:
